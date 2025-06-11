@@ -9,10 +9,10 @@ export interface TerminalScreenshotOptions {
   readonly fontFamily: string;
   // Background color of the terminal. (default: black)
   readonly backgroundColor: string;
-  // Type of the screenshot to be generated. (default: png)
-  readonly type: "png" | "jpeg";
+  // Kind of the screenshot to be generated. (default: png)
+  readonly kind: "png" | "jpeg";
   // Path to a theme definition, https://xtermjs.org/docs/api/terminal/interfaces/itheme/,
-  // check xterm-theme for examples https://github.com/ysk2014/xterm-theme/
+  // check tests/ayu.json for examples
   readonly colorScheme: string | URL;
 }
 
@@ -37,10 +37,10 @@ export const terminalScreenshotOptionsSchema = joi.object({
     .default("black")
     // eslint-disable-next-line @typescript-eslint/naming-convention
     .messages({"any.only": "Background color of the terminal. (default: black)"}),
-  type: joi.string().valid("png", "jpeg").default("png"),
+  kind: joi.string().valid("png", "jpeg").default("png"),
   colorScheme: joi
     .string()
     .optional()
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    .messages({"any.only": "Path to a theme definition, check type defintion or xterm-theme for examples"}),
+    .messages({"any.only": "Path to a theme definition, check type defintion or tests/ayu.json for examples"}),
 });

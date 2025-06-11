@@ -13,7 +13,7 @@ const options = new Command("terminal-screenshot")
   .option("-d --data [string]", "Data to be render to the terminal.")
   .option("-f --font-family [string]", "Font family to use in terminal output. (default: Monaco)")
   .option("-m --margin [number]", "Margin to leave around the terminal area in pixels. (default: 0)")
-  .option("-t --type [png|jpeg]", "Type of the screenshot to be generated. (default: png)")
+  .option("-t --kind [png|jpeg]", "Kind of the screenshot to be generated. (default: png)")
   .requiredOption("-o --output [path]", "Output path to save the screenshot to.")
   .helpOption("-h --help", "display usage help.")
   .exitOverride((error) => {
@@ -34,7 +34,7 @@ const options = new Command("terminal-screenshot")
       margin: options.margin ? parseInt(options.margin) : undefined,
       fontFamily: options.fontFamily,
       backgroundColor: options.backgroundColor,
-      type: options.type,
+      kind: options.kind,
       colorScheme: options.colorScheme,
     });
 

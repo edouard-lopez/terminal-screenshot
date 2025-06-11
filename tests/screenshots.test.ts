@@ -28,6 +28,25 @@ defineTest("margin", {
   backgroundColor: "#FFF",
 });
 
+defineTest("color-scheme-dark", {
+  data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
+  colorScheme: path.resolve(__dirname, "./ayu.json"),
+});
+
+defineTest("color-scheme-light", {
+  data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
+  colorScheme: path.resolve(__dirname, "./tomorrow.json"),
+});
+
+it.concurrent("missing-color-scheme-file", async () => {
+  await expect(
+    renderScreenshot({
+      data: "foo",
+      colorScheme: path.resolve(__dirname, "./missing-colorScheme.json"),
+    }),
+  ).rejects.toThrow(/Failed to load colorScheme from/);
+});
+
 /*
  * Utils:
  */
@@ -39,25 +58,6 @@ function light(...parts: string[]): string {
 function dark(...parts: string[]): string {
   return colors.bgHex("#000").hex("#FFF")(parts.join(""));
 }
-
-defineTest("colorScheme: dark", {
-  data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
-  colorScheme: path.resolve(__dirname, "./ayu.json"),
-});
-
-defineTest("colorScheme: light", {
-  data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
-  colorScheme: path.resolve(__dirname, "./tomorrow.json"),
-});
-
-it.concurrent("missing colorScheme file", async () => {
-  await expect(
-    renderScreenshot({
-      data: "foo",
-      colorScheme: path.resolve(__dirname, "./missing-colorScheme.json"),
-    }),
-  ).rejects.toThrow(/Failed to load colorScheme from/);
-});
 
 function defineTest(id: string, options: Partial<TerminalScreenshotOptions>): void {
   it.concurrent(id, async () => {

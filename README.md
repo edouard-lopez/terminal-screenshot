@@ -14,7 +14,7 @@ const image = await renderScreenshot({
   margin: 0, // Margin to leave around the terminal area in pixels. (default: 0)
   fontFamily: "Monaco", // Font family to use in terminal output. (default: Monaco)
   backgroundColor: "black", // Background color of the terminal. (default: black)
-  type: "png", // Type of the screenshot to be generated. (default: png)
+  kind: "png", // Kind of the screenshot to be generated. (default: png)
   theme: {…}, // xterm ITheme https://xtermjs.org/docs/api/terminal/interfaces/itheme/
 });
 
@@ -23,7 +23,7 @@ await fs.writeFile(destination, image);
 
 ### Theme
 
-You can use the `theme` option to customize the terminal colors. You can use the [xterm ITheme](https://xtermjs.org/docs/api/terminal/interfaces/itheme/) interface to define the theme. Or import a theme from [xterm-theme](https://github.com/ysk2014/xterm-theme/) and modify it.
+You can use the `theme` option to customize the terminal colors. You can use the [xterm ITheme](https://xtermjs.org/docs/api/terminal/interfaces/itheme/) interface to define the theme. Or check out [tests/ayu.json](tests/ayu.json) and modify it.
 
 <details>
   <summary>Theme definition</summary>

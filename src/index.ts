@@ -36,7 +36,7 @@ export async function renderScreenshot(options: Partial<TerminalScreenshotOption
         height: height + validatedOptions.margin * 2,
         width: width + validatedOptions.margin * 2,
       },
-      type: validatedOptions.type,
+      type: validatedOptions.kind,
     });
 
     if (!Buffer.isBuffer(buffer)) {
