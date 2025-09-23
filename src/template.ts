@@ -9,18 +9,7 @@ export async function generateTemplate(options: TerminalScreenshotOptions): Prom
   const terminalRows = lines.length;
   const terminalColumns = Math.max(...lines.map(measureLength));
 
-  let colorScheme: ITheme = {};
-  if (options.colorScheme) {
-    try {
-      colorScheme = path.isAbsolute(options.colorScheme.toString())
-        ? require(options.colorScheme.toString())
-        : require(path.resolve(options.colorScheme.toString()));
-    } catch (error) {
-      throw new Error(`Failed to load colorScheme from ${options.colorScheme}: ${(error as Error).message}`);
-    }
-  } else {
-    colorScheme = {background: options.backgroundColor};
-  }
+  const colorScheme: ITheme = options.colorScheme || {background: options.backgroundColor};
 
   const template = `
     <!DOCTYPE html>

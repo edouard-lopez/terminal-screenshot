@@ -1,4 +1,5 @@
 import joi from "joi";
+import {ITheme} from "xterm";
 
 export interface TerminalScreenshotOptions {
   // Data to be render to the terminal.
@@ -13,7 +14,7 @@ export interface TerminalScreenshotOptions {
   readonly kind: "png" | "jpeg";
   // Path to a theme definition, https://xtermjs.org/docs/api/terminal/interfaces/itheme/,
   // check tests/ayu.json for examples
-  readonly colorScheme: string | URL;
+  readonly colorScheme: ITheme;
 }
 
 export const terminalScreenshotOptionsSchema = joi.object({
@@ -39,8 +40,8 @@ export const terminalScreenshotOptionsSchema = joi.object({
     .messages({"any.only": "Background color of the terminal. (default: black)"}),
   kind: joi.string().valid("png", "jpeg").default("png"),
   colorScheme: joi
-    .string()
-    .optional()
+    .object<ITheme>()
+    .min(1)
     // eslint-disable-next-line @typescript-eslint/naming-convention
     .messages({"any.only": "Path to a theme definition, check type defintion or tests/ayu.json for examples"}),
 });

@@ -4,6 +4,7 @@ import os from "os";
 import path from "path";
 import {renderScreenshot} from "../src/index";
 import {TerminalScreenshotOptions} from "../src/options";
+import {loadColorScheme} from "../src/color-scheme";
 
 const colors = new chalk.Instance({
   // full color support
@@ -30,21 +31,18 @@ defineTest("margin", {
 
 defineTest("color-scheme-dark", {
   data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
-  colorScheme: path.resolve(__dirname, "./ayu.json"),
+  colorSchemePath: path.resolve(__dirname, "./ayu.json"),
 });
 
 defineTest("color-scheme-light", {
   data: colors.cyan("INFO:") + colors.gray(" using a light color scheme!"),
-  colorScheme: path.resolve(__dirname, "./tomorrow.json"),
+  colorSchemePath: path.resolve(__dirname, "./tomorrow.json"),
 });
 
 it.concurrent("missing-color-scheme-file", async () => {
-  await expect(
-    renderScreenshot({
-      data: "foo",
-      colorScheme: path.resolve(__dirname, "./missing-colorScheme.json"),
-    }),
-  ).rejects.toThrow(/Failed to load colorScheme from/);
+  await expect(loadColorScheme(path.resolve(__dirname, "./missing-colorScheme.json"))).rejects.toThrow(
+    /Failed to load colorScheme from/,
+  );
 });
 
 /*
@@ -59,24 +57,48 @@ function dark(...parts: string[]): string {
   return colors.bgHex("#000").hex("#FFF")(parts.join(""));
 }
 
-function defineTest(id: string, options: Partial<TerminalScreenshotOptions>): void {
-  it.concurrent(id, async () => {
-    const buffer = await renderScreenshot({
-      fontFamily: "Courier",
-      ...options,
-    });
+function defineTest(
+  id: string,
+  options: Partial<TerminalScreenshotOptions> & {
+    colorSchemePath?: string;
+  },
+): void {
+  it.concurrent(
+    id,
+    async () => {
+      let finalOptions: Partial<TerminalScreenshotOptions>;
 
-    expect(buffer).toMatchImageSnapshot({
-      customSnapshotsDir: path.join(__dirname, "screenshots"),
-      customSnapshotIdentifier: id,
+      if ("colorSchemePath" in options && options.colorSchemePath) {
+        const loadedColorScheme = await loadColorScheme(options.colorSchemePath);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {colorSchemePath: _, ...optionsWithoutPath} = options;
+        finalOptions = {
+          ...optionsWithoutPath,
+          colorScheme: loadedColorScheme,
+        };
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {colorSchemePath: _, ...optionsWithoutPath} = options;
+        finalOptions = optionsWithoutPath;
+      }
 
-      // Allow a margin of error, as this is just an e2e test to verify we load/render successfully.
-      // But we should not fail for minor font differences between platforms:
-      failureThreshold: 25,
-      failureThresholdType: "percent",
+      const buffer = await renderScreenshot({
+        fontFamily: "Courier",
+        ...finalOptions,
+      });
+      expect(buffer).toMatchImageSnapshot({
+        customSnapshotsDir: path.join(__dirname, "screenshots"),
+        customSnapshotIdentifier: id,
 
-      diffDirection: "vertical",
-      customDiffDir: path.join(os.tmpdir(), "terminal-screenshot-tests"), // __SCREENSHOT_TEST_FAILURES_DIR__
-    });
-  });
+        // Allow a margin of error, as this is just an e2e test to verify we load/render successfully.
+        // But we should not fail for minor font differences between platforms:
+        failureThreshold: 25,
+        failureThresholdType: "percent",
+
+        diffDirection: "vertical",
+        customDiffDir: path.join(os.tmpdir(), "terminal-screenshot-tests"), // __SCREENSHOT_TEST_FAILURES_DIR__
+      });
+    },
+    10000,
+  );
 }

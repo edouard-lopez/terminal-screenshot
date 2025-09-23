@@ -15,50 +15,49 @@ const image = await renderScreenshot({
   fontFamily: "Monaco", // Font family to use in terminal output. (default: Monaco)
   backgroundColor: "black", // Background color of the terminal. (default: black)
   kind: "png", // Kind of the screenshot to be generated. (default: png)
-  theme: {…}, // xterm ITheme https://xtermjs.org/docs/api/terminal/interfaces/itheme/
+  colorScheme: {…}, // xterm ITheme https://xtermjs.org/docs/api/terminal/interfaces/itheme/
 });
 
 await fs.writeFile(destination, image);
 ```
 
-### Theme
+### Color Scheme
 
-You can use the `theme` option to customize the terminal colors. You can use the [xterm ITheme](https://xtermjs.org/docs/api/terminal/interfaces/itheme/) interface to define the theme. Or check out [tests/ayu.json](tests/ayu.json) and modify it.
+You can use the `colorScheme` option to customize the terminal colors. You can use the [xterm ITheme](https://xtermjs.org/docs/api/terminal/interfaces/itheme/) interface to define the color scheme. Or check out [tests/ayu.json](tests/ayu.json) and modify it.
 
 <details>
   <summary>Theme definition</summary>
   
-```ts
-// ./theme.js
-export default = { // ayu theme
-  foreground: "#e6e1cf",
-  background: "#0f1419",
-  cursor: "#f29718",
+```json
+{
+  "foreground": "#e6e1cf",
+  "background": "#0f1419",
+  "cursor": "#f29718",
 
-black: "#000000",
-brightBlack: "#323232",
+"black": "#000000",
+"brightBlack": "#323232",
 
-red: "#ff3333",
-brightRed: "#ff6565",
+"red": "#ff3333",
+"brightRed": "#ff6565",
 
-green: "#b8cc52",
-brightGreen: "#eafe84",
+"green": "#b8cc52",
+"brightGreen": "#eafe84",
 
-yellow: "#e7c547",
-brightYellow: "#fff779",
+"yellow": "#e7c547",
+"brightYellow": "#fff779",
 
-blue: "#36a3d9",
-brightBlue: "#68d5ff",
+"blue": "#36a3d9",
+"brightBlue": "#68d5ff",
 
-magenta: "#f07178",
-brightMagenta: "#ffa3aa",
+"magenta": "#f07178",
+"brightMagenta": "#ffa3aa",
 
-cyan: "#95e6cb",
-brightCyan: "#c7fffd",
+"cyan": "#95e6cb",
+"brightCyan": "#c7fffd",
 
-white: "#ffffff",
-brightWhite: "#ffffff",
-};
+"white": "#ffffff",
+"brightWhite": "#ffffff"
+}
 
 ````
 
@@ -67,13 +66,13 @@ brightWhite: "#ffffff",
 
 ```diff
 import {renderScreenshot} from "terminal-screenshot";
++ import colorScheme from "./ayu-theme.json";
 
 const image = await renderScreenshot({
   data: "[[DATA]]", // Data to be render to the terminal.
   // … other options
-+  colorScheme: path.resolve(__dirname, '/path/to/color-scheme.js'),
++  colorScheme: colorScheme,
 });
-
 ````
 
 </details>
@@ -98,7 +97,7 @@ terminal-screenshot --help
 -m --margin [number]              Margin to leave around the terminal area in pixels. (default: 0)
 -f --font-family [string]         Font family to use in terminal output. (default: Monaco)
 -b --background-color [css-color] Background color of the terminal. (default: black)
--t --type [png|jpeg]              Type of the screenshot to be generated. (default: png)
+-k --kind [png|jpeg]              Kind of the screenshot to be generated. (default: png)
 -c --color-scheme [string]        Path to color scheme defintion (see https://xtermjs.org/docs/api/terminal/interfaces/itheme/)
 -o --output [path]                Output path to save the screenshot to.
 -h --help                         Display usage help.

@@ -2,7 +2,9 @@
 
 import {Command} from "commander";
 import {writeFile} from "fs-extra";
+import path from "path";
 import {renderScreenshot} from "./index";
+import {loadColorScheme} from "./color-scheme";
 
 const options = new Command("terminal-screenshot")
   .description("Render terminal ANSI output into images!")
@@ -13,7 +15,7 @@ const options = new Command("terminal-screenshot")
   .option("-d --data [string]", "Data to be render to the terminal.")
   .option("-f --font-family [string]", "Font family to use in terminal output. (default: Monaco)")
   .option("-m --margin [number]", "Margin to leave around the terminal area in pixels. (default: 0)")
-  .option("-t --kind [png|jpeg]", "Kind of the screenshot to be generated. (default: png)")
+  .option("-k --kind [png|jpeg]", "Kind of the screenshot to be generated. (default: png)")
   .requiredOption("-o --output [path]", "Output path to save the screenshot to.")
   .helpOption("-h --help", "display usage help.")
   .exitOverride((error) => {
@@ -29,13 +31,17 @@ const options = new Command("terminal-screenshot")
 
 (async () => {
   try {
+    const colorScheme = options.colorScheme
+      ? await loadColorScheme(path.resolve(process.cwd(), options.colorScheme))
+      : undefined;
+
     const buffer = await renderScreenshot({
       data: options.data || (await getStdinData()),
       margin: options.margin ? parseInt(options.margin) : undefined,
       fontFamily: options.fontFamily,
       backgroundColor: options.backgroundColor,
       kind: options.kind,
-      colorScheme: options.colorScheme,
+      colorScheme,
     });
 
     await writeFile(options.output, buffer);
